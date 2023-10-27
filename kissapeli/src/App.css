@@ -1,4 +1,5 @@
 .card-player{
+ 
   width: 120px;
   height: 200px;
   background-color: navy;
@@ -16,7 +17,7 @@
   color: lightcoral;  
   border-radius: 8px;
   border: 4px solid red;
-  box-shadow: 1px 1px 4px 1px lightblue;
+  box-shadow: 1px 1px 4px 1px lightcoral;
   margin: 10px; 
 }
 
@@ -31,6 +32,7 @@ li.title{
 font-weight: bolder;
 text-align: center;
 font-size: 16px;
+margin-top: calc(-15px);
 }
 
 .stat-list-item{
@@ -38,6 +40,7 @@ font-size: 16px;
     display: flex;
     justify-content: space-between;
     font-size: 12px;
+    direction: ltr;
 }
 .value{
     text-align: right;
@@ -53,4 +56,22 @@ gap:10px;
     text-align: center;
     align-self: center;
     min-width: 10vw;
+}
+
+.card-list{
+  display: flex;
+}
+
+.card-list.enemy{
+direction: rtl;
+
+}
+.card-list-item.player{
+margin-left: calc(4vw - 150px);
+
+  
+}
+.card-list-item.enemy{
+  margin-right: calc(4vw - 150px);
+
 }

@@ -71,42 +71,108 @@ const enemyCard=[
 
 ]
 
-var playerid=getRandomInt(0,playerCard.length-1)
-var enemyid=getRandomInt(0,enemyCard.length-1)
 
-const cards=[playerCard,playerid,enemyCard,enemyid]
+const allCards=[
+  {
+    image:"http://placekitten.com/120/103?image=0",
+  title:'Cat-astrophe',
+  },
+  {
+    image:"https://placekitten.com/120/102?image=1",
+    title:'Mr Pawsome',
+  },
+  {
+    image:"http://placekitten.com/120/103?image=2",
+  title:'Pawnage',
+  },
+  {
+    image:"http://placekitten.com/120/103?image=3",
+  title:'Catalonian',
+  },
+  {
+    image:"http://placekitten.com/120/103?image=4",
+  title:'Catrice',
+  },
+  {
+    image:"http://placekitten.com/120/103?image=5",
+  title:'Captain Purrs',
+  },
+  {
+    image:"http://placekitten.com/120/103?image=6",
+  title:'Purrfect',
+  },
+  {
+  image:"https://placekitten.com/120/103?image=7",
+  title:'Catsparow',
+  },   {
+  image:"https://placekitten.com/120/103?image=8",
+  title:'Catnip',
+  },   {
+    image:"https://placekitten.com/120/103?image=9",
+    title:'Mittens',
+  },   {
+  image:"http://placekitten.com/120/103?image=10",
+  title:'Ka-Paw',
+  },
+  {
+    image:"https://placekitten.com/120/103?image=11",
+    title:'Chingis Khat',
+    },
+    {
+      image:"https://placekitten.com/120/103?image=12",
+      title:'Pawder Sniffer',
+      },        
+  {
+  image:"http://placekitten.com/120/103?image=15",
+  title:'RamPaw G',
+  },
+]
+
+var playerid=6
+var enemyid=6
+
+const nCards=[playerCard,playerid,enemyCard,enemyid]
 
 const createCard=(index,side)=>({
-  type:cards[2*side][2*side+1].type,
-  image:cards[2*side][2*side+1].image,
+  type:((index-7<0)?"card-player":"card-enemy"),
+  image:allCards[index].image,
   stats:[
     {name:'Cuteness', value: 3+Math.round(5*Math.random())},
     {name:'Power', value:5+Math.round(3*Math.random())},
     {name:'Vitality', value:8+Math.round(8*Math.random())},
     {name:'Speed', value:3+Math.round(3*Math.random())},
   ],
-  title:cards[2*side][2*side+1].title,
-  id:crypto.randomUUID()
+  title:allCards[index].title,
+  id:crypto.randomUUID(),
 })
 
+const deck=Array(allCards.length).fill(null).map((_,index)=>createCard(index,0));
+const half=Math.ceil(deck.length/2);
+const dealCards=()=>{
+  return{
+    player:deck.slice(0,half),
+    enemy: deck.slice(half)
+  }
+}
 
 export default function app(){
   const[result,SetResult] = useState()
+  const[cards,SetCards]=useState(dealCards)
 
 function compareCards(){
-  const playerstats=playerCard[playerid].stats
-  const enemystats=enemyCard[enemyid].stats
+  const playerstats=cards.player[playerid].stats
+  const enemystats=cards.enemy[enemyid].stats
 
 
 
   var playerturns=0
   var enemyturns=0
-  if (( playerstats[1].value-enemystats[0].value)>0){
+  if (( playerstats[1].value)>enemystats[0].value){
    playerturns=Math.ceil( enemystats[2].value/(playerstats[3].value/enemystats[3].value*( playerstats[1].value-enemystats[0].value)))
 }else{
    playerturns=Math.ceil( enemystats[2].value/(playerstats[3].value))
 }
-if ((enemystats[0].value-playerstats[1].value)>0){
+if ((enemystats[1].value)>playerstats[0].value){
    enemyturns=Math.ceil( playerstats[2].value/(enemystats[3].value/playerstats[3].value*(enemystats[1].value-playerstats[0].value)))
 }else{
    enemyturns=Math.ceil( playerstats[2].value/(enemystats[3].value))
@@ -116,13 +182,13 @@ if ((enemystats[0].value-playerstats[1].value)>0){
 
 
   if (playerturns>enemyturns){
-    SetResult(enemyCard[enemyid].title+ " won in "+enemyturns+" turns!")
-     console.log(enemyCard[enemyid].title+ " won in "+enemyturns+" turns!");
+    SetResult(cards.enemy[enemyid].title+ " won in "+enemyturns+" turns!")
+     console.log(cards.enemy[enemyid].title+ " won in "+enemyturns+" turns!");
     
 
   }else if(playerturns<enemyturns){
-    SetResult(playerCard[playerid].title+ " won in "+playerturns+" turns!");
- console.log(playerCard[playerid].title+ " won in "+playerturns+" turns!");
+    SetResult(cards.player[playerid].title+ " won in "+playerturns+" turns!");
+ console.log(cards.player[playerid].title+ " won in "+playerturns+" turns!");
 
 
   }else{
@@ -148,14 +214,34 @@ return(
   
   <h1 className="game">Pawsome Pawlers</h1>
   <div className="game">
-  <Card card={playerCard[playerid]}/>
+  <ul className="card-list">
+
+    {cards.player.map(pCard=>(
+
+      <li className="card-list-item player" key={pCard.id}>
+        <Card card={pCard}/>
+
+      </li>
+    ))}
+  </ul>
+
+ 
   <div className="center-area">
   <p>{result || 'Presss the button'}</p>
   <button type="button" onClick={compareCards}>Fight!</button>
   </div>
-  <Card card={enemyCard[enemyid]}/>
+  <ul className="card-list enemy">
 
- 
+    {cards.enemy.map(eCard=>(
+
+      <li className="card-list-item enemy" key={eCard.id}>
+        <Card card={eCard}/>
+
+      </li>
+    ))}
+  </ul>
+
+
   </div>
 </div>
 );
