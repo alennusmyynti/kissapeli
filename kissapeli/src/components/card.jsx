@@ -2,6 +2,8 @@
 
 export default function Card({card}){
 
+    if (!card) return <div className="card"/>;
+
     return(
 <div className={card.type}>
    <img src={card.image}></img>

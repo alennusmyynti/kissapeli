@@ -1,75 +1,13 @@
 
 import Card from "./components/card";
 import './App.css';
+import PlayButton from "./components/PlayButton";
 import { useState } from "react";
-
 
 
 const getRandomInt=(min,max) => Math.floor(min+(max-min+1)*Math.random())
 
-const playerCard=[
-  {
-    type:"card-player",
-    image:"http://placekitten.com/120/103?image=0",
-    stats:[
-      {name:'Cuteness', value: 3+Math.round(5*Math.random())},
-      {name:'Power', value:5+Math.round(3*Math.random())},
-      {name:'Vitality', value:8+Math.round(8*Math.random())},
-      {name:'Speed', value:3+Math.round(3*Math.random())},
-    ],
-    title:'Cat-astrophe',
-},
-{
-  type:"card-player",
-  image:"https://placekitten.com/120/103?image=7",
-  stats:[
-    {name:'Cuteness', value: 3+Math.round(5*Math.random())},
-    {name:'Power', value:5+Math.round(3*Math.random())},
-    {name:'Vitality', value:8+Math.round(8*Math.random())},
-    {name:'Speed', value:3+Math.round(3*Math.random())},
-  ],
-  title:'Catsparow',
-}
-]
 
-
-
-const enemyCard=[
-  {
-    type:"card-enemy",
-    image:"https://placekitten.com/120/102?image=1",
-    stats:[
-      {name:'Cuteness', value: 3+Math.round(5*Math.random())},
-      {name:'Power', value:5+Math.round(3*Math.random())},
-      {name:'Vitality', value:8+Math.round(8*Math.random())},
-      {name:'Speed', value:3+Math.round(3*Math.random())},
-    ],
-    title:'Mr Pawsome',
-},
-{
-  type:"card-enemy",
-  image:"https://placekitten.com/120/102?image=10",
-  stats:[
-    {name:'Cuteness', value: 3+Math.round(5*Math.random())},
-    {name:'Power', value:5+Math.round(3*Math.random())},
-    {name:'Vitality', value:8+Math.round(8*Math.random())},
-    {name:'Speed', value:3+Math.round(3*Math.random())},
-  ],
-  title:'Ka-Paw',
-},
-{
-  type:"card-enemy",
-  image:"https://placekitten.com/120/103?image=15",
-  stats:[
-    {name:'Cuteness', value: 3+Math.round(5*Math.random())},
-    {name:'Power', value:5+Math.round(3*Math.random())},
-    {name:'Vitality', value:8+Math.round(8*Math.random())},
-    {name:'Speed', value:3+Math.round(3*Math.random())},
-  ],
-  title:'RamPaw G',
-}
-
-]
 
 
 const allCards=[
@@ -131,10 +69,8 @@ const allCards=[
 var playerid=6
 var enemyid=6
 
-const nCards=[playerCard,playerid,enemyCard,enemyid]
-
 const createCard=(index,side)=>({
-  type:((index-7<0)?"card-player":"card-enemy"),
+  type:"card",
   image:allCards[index].image,
   stats:[
     {name:'Cuteness', value: 3+Math.round(5*Math.random())},
@@ -148,17 +84,27 @@ const createCard=(index,side)=>({
 
 const deck=Array(allCards.length).fill(null).map((_,index)=>createCard(index,0));
 const half=Math.ceil(deck.length/2);
+
+
 const dealCards=()=>{
+  shuffle(deck)
   return{
     player:deck.slice(0,half),
     enemy: deck.slice(half)
   }
 }
 
+function shuffle(array){
+  for(let i=array.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [array[i],array[j]] = [array[j],array[i]];
+  }
+}
+
 export default function app(){
   const[result,SetResult] = useState()
   const[cards,SetCards]=useState(dealCards)
-
+const[gameState, setGameState]=useState('play')
 function compareCards(){
   const playerstats=cards.player[playerid].stats
   const enemystats=cards.enemy[enemyid].stats
@@ -204,6 +150,7 @@ if ((enemystats[1].value)>playerstats[0].value){
     enemystats, playerstats,playerid
    ])
 
+   setGameState(result)
 
 }
 
@@ -216,10 +163,11 @@ return(
   <div className="game">
   <ul className="card-list">
 
-    {cards.player.map(pCard=>(
+    {cards.player.map((pCard, index)=>(
 
       <li className="card-list-item player" key={pCard.id}>
-        <Card card={pCard}/>
+        {pCard.type="card-player"}
+        <Card card={index===0 ? pCard : null}/>
 
       </li>
     ))}
@@ -228,14 +176,17 @@ return(
  
   <div className="center-area">
   <p>{result || 'Presss the button'}</p>
-  <button type="button" onClick={compareCards}>Fight!</button>
+
+  <PlayButton text={"Fight!"} handleClick={compareCards}/>
+
   </div>
   <ul className="card-list enemy">
 
-    {cards.enemy.map(eCard=>(
+    {cards.enemy.map((eCard, index)=>(
 
       <li className="card-list-item enemy" key={eCard.id}>
-        <Card card={eCard}/>
+        {eCard.type="card-enemy"}
+        <Card card={index===0 ? eCard : null}/>
 
       </li>
     ))}
