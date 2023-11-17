@@ -102,12 +102,13 @@ function shuffle(array){
 }
 
 export default function app(){
-  const[result,SetResult] = useState()
-  const[cards,SetCards]=useState(dealCards)
+  const[result,SetResult] = useState('')
+  const[cards,setCards]=useState(dealCards)
 const[gameState, setGameState]=useState('play')
+const[selectedStat, setSelectedStat] = useState(0);
 function compareCards(){
-  const playerstats=cards.player[playerid].stats
-  const enemystats=cards.enemy[enemyid].stats
+  const playerstats=cards.player[0].stats
+  const enemystats=cards.enemy[0].stats
 
 
 
@@ -128,19 +129,16 @@ if ((enemystats[1].value)>playerstats[0].value){
 
 
   if (playerturns>enemyturns){
-    SetResult(cards.enemy[enemyid].title+ " won in "+enemyturns+" turns!")
-     console.log(cards.enemy[enemyid].title+ " won in "+enemyturns+" turns!");
+    SetResult("Loss")
     
 
   }else if(playerturns<enemyturns){
-    SetResult(cards.player[playerid].title+ " won in "+playerturns+" turns!");
- console.log(cards.player[playerid].title+ " won in "+playerturns+" turns!");
-
+    SetResult("Win");
+ 
 
   }else{
-     SetResult("Draw! The fight lasted for "+playerturns+" turns!")
-      console.log("Draw! The fight lasted for "+playerturns+" turns!");
-
+     SetResult("Draw")
+     
   }
   console.log([
     Math.ceil( enemystats[2].value/(playerstats[3].value/enemystats[3].value*( playerstats[1].value-enemystats[0].value))),
@@ -154,7 +152,41 @@ if ((enemystats[1].value)>playerstats[0].value){
 
 }
 
+function nextRound(){
+    setCards(cards =>{
+      const playedCards = [{...cards.player[0]}, {...cards.enemy[0]}]
+      const player = cards.player.slice(1);
+      const enemy = cards.enemy.slice(1);
 
+       if(result === 'Draw'){
+        return{
+          player,
+          enemy
+        };
+       }
+       if(result === 'Win'){
+        return{
+          player: [...player, ...playedCards],
+          enemy
+        };
+       }
+       if(result === 'Loss'){
+        return{
+          player,
+          enemy:[...enemy, ...playedCards]
+        };
+       }
+       return cards;
+    });
+    setGameState('play');
+    SetResult('');
+  }
+
+function restartGame(){
+setCards(dealCards);
+SetResult('');
+setGameState('play');
+}
 
 return(
 <div>
@@ -167,18 +199,23 @@ return(
 
       <li className="card-list-item player" key={pCard.id}>
         {pCard.type="card-player"}
-        <Card card={index===0 ? pCard : null}/>
-
+        <Card card={index===0 ? pCard : null}
+        handleSelect={statIndex=> gameState==='play' && setSelectedStat(statIndex)}
+        selectStat={selectedStat}/>
       </li>
     ))}
   </ul>
 
  
   <div className="center-area">
-  <p>{result || 'Presss the button'}</p>
-
-  <PlayButton text={"Fight!"} handleClick={compareCards}/>
-
+   <p>{result || 'Press the button'}</p>
+          {
+            gameState === 'play'?(
+              <PlayButton text={'Play'} handleClick={compareCards}/> 
+            ) : (
+              <PlayButton text={'Next'} handleClick={nextRound}/> 
+            )
+          }
   </div>
   <ul className="card-list enemy">
 
@@ -186,7 +223,8 @@ return(
 
       <li className="card-list-item enemy" key={eCard.id}>
         {eCard.type="card-enemy"}
-        <Card card={index===0 ? eCard : null}/>
+        <Card card={index===0 ? eCard : null}
+         />
 
       </li>
     ))}

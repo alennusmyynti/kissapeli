@@ -25,11 +25,11 @@
  
   width: 120px;
   height: 200px;
-  background-color: darkmagenta;
-  color: plum;  
+  background-color: gray;
+  color: darkgray;  
   border-radius: 8px;
-  border: 4px solid magenta;
-  box-shadow: 1px 1px 4px 1px plum;
+  border: 4px solid darkgray;
+
   margin: 10px; 
   
 }
@@ -57,7 +57,7 @@ margin-top: calc(-15px);
     direction: ltr;
 }
 .value{
-    text-align: right;
+  text-align: right;
 }
 
 .game{
@@ -86,7 +86,24 @@ margin-left: calc(4vw - 150px);
 font-size: 0;
   
 }
+.card-list-item.player .stat-list-item:hover{
+  background-color: rgba(0, 0, 0, .25);
+  outline: 1px dashed black;
+}
+.card-list-item.player .stat-list-item.selected:hover{
+  background-color: rgba(0, 0, 0, .75);
+  outline: 1px dashed black;
+  color:white;
+}
 .card-list-item.enemy{
   margin-right: calc(4vw - 150px);
 font-size: 0;
 }
+
+  .stat-list-item.selected{
+    outline: 1px solid black;
+    background-color: rgba(0, 0, 0, .5);
+  
+    font-weight: bolder;
+  
+  }
