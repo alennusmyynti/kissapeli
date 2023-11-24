@@ -106,8 +106,19 @@ export default function app(){
   const[cards,setCards]=useState(dealCards)
 const[gameState, setGameState]=useState('play')
 const[selectedStat, setSelectedStat] = useState(0);
+
+if(gameState!=='game_over' &&(!cards.player.length || !cards.enemy.length)){
+SetResult(()=>{
+  if(!cards.enemy.length) return 'Player won!';
+  else if (!cards.player.length) return 'Player lost!';
+  return 'Draw';
+});
+setGameState('game_over')
+}
+
+
 function compareCards(){
-  const playerstats=cards.player[0].stats
+  /*const playerstats=cards.player[0].stats
   const enemystats=cards.enemy[0].stats
 
 
@@ -148,7 +159,20 @@ if ((enemystats[1].value)>playerstats[0].value){
     enemystats, playerstats,playerid
    ])
 
-   setGameState(result)
+   setGameState(result)*/
+   const playerStat = cards.player[0].stats[selectedStat];
+   const enemyStat = cards.enemy[0].stats[selectedStat];
+
+   if(playerStat.value === enemyStat.value){
+     SetResult('Draw');      
+   }
+   else if(playerStat.value > enemyStat.value){
+    SetResult('Win'); 
+   }
+   else{
+     SetResult('Loss'); 
+   }
+   setGameState('result');
 
 }
 
@@ -193,7 +217,9 @@ return(
   
   <h1 className="game">Pawsome Pawlers</h1>
   <div className="game">
-  <ul className="card-list">
+<div className="hand player">
+  <h2>Player</h2>
+<ul className="card-list">
 
     {cards.player.map((pCard, index)=>(
 
@@ -205,30 +231,36 @@ return(
       </li>
     ))}
   </ul>
+</div>
 
- 
   <div className="center-area">
    <p>{result || 'Press the button'}</p>
           {
             gameState === 'play'?(
               <PlayButton text={'Play'} handleClick={compareCards}/> 
-            ) : (
+            ) : gameState==='game_over' ? 
+            (<PlayButton text={'Restart'} handleClick={restartGame}/>)
+            :(
               <PlayButton text={'Next'} handleClick={nextRound}/> 
             )
           }
   </div>
+  <div className="hand enemy">
+    <h2>Enemy</h2>
   <ul className="card-list enemy">
 
-    {cards.enemy.map((eCard, index)=>(
+{cards.enemy.map((eCard, index)=>(
 
-      <li className="card-list-item enemy" key={eCard.id}>
-        {eCard.type="card-enemy"}
-        <Card card={index===0 ? eCard : null}
-         />
+  <li className="card-list-item enemy" key={eCard.id}>
+    {eCard.type="card-enemy"}
+    <Card card={result &&index===0 ? eCard : null}
+     />
 
-      </li>
-    ))}
-  </ul>
+  </li>
+))}
+</ul>
+  </div>
+  
 
 
   </div>

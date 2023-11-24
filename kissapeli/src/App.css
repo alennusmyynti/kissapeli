@@ -107,3 +107,13 @@ font-size: 0;
     font-weight: bolder;
   
   }
+
+.hand{
+    display: flex;
+    flex-direction: column;
+    min-width: 40vw;
+}
+
+.hand.player >h2{
+  align-self: end;
+}
